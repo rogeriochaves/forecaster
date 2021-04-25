@@ -7,7 +7,7 @@ def test_id(testId):
 
 
 def extract_10_day_forecast(html, today=today()):
-    soup = BeautifulSoup(html, features='lxml')
+    soup = BeautifulSoup(html, features='html.parser')
     daily_forecast = soup.find(attrs=test_id("DailyForecast"))
     summaries = daily_forecast.find_all("summary")
 
@@ -38,7 +38,7 @@ def extract_day_forecast(summary, datetime):
 
 
 def extract_hourly_forecast(html, now=now()):
-    soup = BeautifulSoup(html, features='lxml')
+    soup = BeautifulSoup(html, features='html.parser')
     daily_forecast = soup.find(attrs=test_id("HourlyForecast"))
     summaries = daily_forecast.find_all("summary")
 

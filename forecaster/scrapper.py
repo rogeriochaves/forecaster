@@ -3,6 +3,11 @@ import db
 import requests
 import psycopg2
 import psycopg2.extras
+import os
+import sentry_sdk
+from prometheus_client import CollectorRegistry, Counter, push_to_gateway
+
+APP_ENV = os.environ.get('APP_ENV', 'dev')
 
 CITY_CODES = {
     'Amsterdam': 'a0a48c0f8630d7e60cc5d03bf2dc2d039cad87e8dfdb8fc476a43473a6ff7e17',
@@ -12,6 +17,16 @@ CITY_CODES = {
     'Krasnoyarsk': 'bcac3a08a51c90ff7e3fb94c1bd1b4b444b183142d7602044b094dd259853913',
     'Cairo': '2baa93f2531b18395e9b0062c11ffee82838615b3ac6141394235eb734bac64d',
 }
+
+if APP_ENV == 'prod':
+    sentry_sdk.init(
+        "https://a510c31a6fcb4ed4b84cba4b8064372d@o378045.ingest.sentry.io/5735160",
+        traces_sample_rate=1.0
+    )
+
+registry = CollectorRegistry()
+counter = Counter('scrapped_forecasts',
+                  'Amount of forecasts scrapped', registry=registry)
 
 
 def run():
@@ -23,6 +38,9 @@ def run():
     scrap_city('Krasnoyarsk')
     scrap_city('Cairo')
 
+    if APP_ENV == 'prod':
+        push_to_gateway('localhost:9091', job='scrapper.py', registry=registry)
+
     print("Done!")
 
 
@@ -30,14 +48,16 @@ def scrap_city(name):
     code = CITY_CODES[name]
 
     req = requests.get('https://weather.com/en-GB/weather/tenday/l/' + code)
-    daily_forecasts = parser.extract_10_day_forecast(req.text)
-    save(name, daily_forecasts)
+    forecasts = parser.extract_10_day_forecast(req.text)
+    save(name, forecasts)
+    counter.inc(len(forecasts))
     print("Saved 10 day forecast for", name)
 
     req = requests.get(
         'https://weather.com/en-GB/weather/hourbyhour/l/' + code)
-    daily_forecasts = parser.extract_hourly_forecast(req.text)
-    save(name, daily_forecasts)
+    forecasts = parser.extract_hourly_forecast(req.text)
+    save(name, forecasts)
+    counter.inc(len(forecasts))
     print("Saved hourly forecast for", name)
 
 

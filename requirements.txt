@@ -2,3 +2,5 @@ beautifulsoup4
 yyyy_mm_dd
 requests
 psycopg2
+prometheus-client
+sentry-sdk
