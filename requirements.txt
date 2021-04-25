@@ -4,3 +4,4 @@ requests
 psycopg2
 prometheus-client
 sentry-sdk
+Flask
