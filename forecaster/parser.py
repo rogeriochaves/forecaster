@@ -25,19 +25,14 @@ def extract_day_forecast(summary, datetime):
     item = {
         "type": "daily",
         "datetime": datetime,
-        "precipitation": "0%",
+        "precipitation": get_precipitation(summary),
         "summary": summary.find(attrs=test_id("wxIcon")).find("span").get_text()
     }
     temperature = summary.find(attrs=test_id("detailsTemperature"))
-    item["max"] = temperature.find(
-        attrs=test_id("TemperatureValue")).get_text()
-    item["min"] = temperature.find(attrs=test_id(
-        "lowTempValue")).find("span").get_text()
-
-    precipitation = summary.find(attrs=test_id("Precip"))
-    if precipitation:
-        item["precipitation"] = precipitation.find(
-            attrs=test_id("PercentageValue")).get_text()
+    item["max"] = parse_temperature(temperature.find(
+        attrs=test_id("TemperatureValue")))
+    item["min"] = parse_temperature(temperature.find(attrs=test_id(
+        "lowTempValue")).find("span"))
 
     return item
 
@@ -64,16 +59,30 @@ def extract_hour_forecast(summary, datetime):
     item = {
         "type": "hourly",
         "datetime": datetime,
-        "precipitation": "0%",
+        "precipitation": get_precipitation(summary),
         "summary": summary.find(attrs=test_id("wxIcon")).find("span").get_text()
     }
     temperature = summary.find(attrs=test_id("detailsTemperature"))
-    item["temperature"] = temperature.find(
-        attrs=test_id("TemperatureValue")).get_text()
-
-    precipitation = summary.find(attrs=test_id("Precip"))
-    if precipitation:
-        item["precipitation"] = precipitation.find(
-            attrs=test_id("PercentageValue")).get_text()
+    item["temperature"] = parse_temperature(temperature.find(
+        attrs=test_id("TemperatureValue")))
 
     return item
+
+
+def get_precipitation(summary):
+    precipitation = summary.find(attrs=test_id("Precip"))
+    if precipitation:
+        precipitation = precipitation.find(
+            attrs=test_id("PercentageValue")).get_text()
+        precipitation = int(precipitation.replace("%", ""))
+        return precipitation
+
+    return 0
+
+
+def parse_temperature(node):
+    temperature = node.get_text().replace("°", "")
+    try:
+        return int(temperature)
+    except:
+        return None

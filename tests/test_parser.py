@@ -16,18 +16,18 @@ class ParserTestCase(unittest.TestCase):
             {
                 'type': 'daily',
                 'datetime': '2021-04-25T00:00:00',
-                'precipitation': '0%',
+                'precipitation': 0,
                 'summary': 'AM Clouds/PM Sun',
-                'max': '10°',
-                'min': '2°'
+                'max': 10,
+                'min': 2
             },
             {
                 'type': 'daily',
                 'datetime': '2021-04-26T00:00:00',
-                'precipitation': '10%',
+                'precipitation': 10,
                 'summary': 'Partly Cloudy',
-                'max': '11°',
-                'min': '3°'
+                'max': 11,
+                'min': 3
             },
         ])
 
@@ -39,15 +39,15 @@ class ParserTestCase(unittest.TestCase):
             {
                 'type': 'hourly',
                 'datetime': '2021-04-25T15:00:00',
-                'precipitation': '0%',
+                'precipitation': 0,
                 'summary': 'Mostly Cloudy',
-                'temperature': '10°'
+                'temperature': 10
             },
             {
                 'type': 'hourly',
                 'datetime': '2021-04-25T16:00:00',
-                'precipitation': '0%',
+                'precipitation': 0,
                 'summary': 'Mostly Cloudy',
-                'temperature': '10°'
+                'temperature': 10
             },
         ])
