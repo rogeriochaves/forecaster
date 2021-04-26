@@ -6,25 +6,23 @@ def test_id(testId):
     return {"data-testid": testId}
 
 
-def extract_10_day_forecast(html, today=today()):
+def extract_10_day_forecast(html):
     soup = BeautifulSoup(html, features='html.parser')
     daily_forecast = soup.find(attrs=test_id("DailyForecast"))
     summaries = daily_forecast.find_all("summary")
 
-    datetime = start_of_yyyy_mm_dd(today)
     result = []
-    for summary in summaries:
-        item = extract_day_forecast(summary, datetime)
-        datetime = move_yyyy_mm_dd(datetime, 1)
+    for delta, summary in enumerate(summaries):
+        item = extract_day_forecast(summary, delta)
         result.append(item)
 
     return result
 
 
-def extract_day_forecast(summary, datetime):
+def extract_day_forecast(summary, delta):
     item = {
         "type": "daily",
-        "datetime": datetime,
+        "forecast_delta": delta,
         "precipitation": get_precipitation(summary),
         "summary": summary.find(attrs=test_id("wxIcon")).find("span").get_text()
     }
@@ -42,23 +40,23 @@ def extract_hourly_forecast(html, now=now()):
     daily_forecast = soup.find(attrs=test_id("HourlyForecast"))
     summaries = daily_forecast.find_all("summary")
 
-    datetime = move_yyyy_mm_dd_hh(start_of_yyyy_mm_dd(now), hour(now))
+    delta = 0
     # if it's quarter past the hour TWC shows forecast for next hour
     if to_datetime(now).minute > 15:
-        datetime = move_yyyy_mm_dd_hh(datetime, 1)
+        delta = 1
     result = []
     for summary in summaries:
-        item = extract_hour_forecast(summary, datetime)
-        datetime = move_yyyy_mm_dd_hh(datetime, 1)
+        item = extract_hour_forecast(summary, delta)
+        delta = delta + 1
         result.append(item)
 
     return result
 
 
-def extract_hour_forecast(summary, datetime):
+def extract_hour_forecast(summary, delta):
     item = {
         "type": "hourly",
-        "datetime": datetime,
+        "forecast_delta": delta,
         "precipitation": get_precipitation(summary),
         "summary": summary.find(attrs=test_id("wxIcon")).find("span").get_text()
     }

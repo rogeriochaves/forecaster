@@ -64,7 +64,7 @@ def scrap_city(name):
 def save(city, forecasts):
     values = []
     for forecast in forecasts:
-        values.append((city, forecast['type'], forecast['datetime'],
+        values.append((city, forecast['type'], forecast['forecast_delta'],
                       forecast['summary'], forecast['precipitation'],
                       forecast.get('temperature'), forecast.get('max'),
                       forecast.get('min')))
@@ -73,7 +73,7 @@ def save(city, forecasts):
     cur = conn.cursor()
 
     psycopg2.extras.execute_values(cur,
-                                   "INSERT INTO Forecasts (city, type, datetime, summary, precipitation, temperature, max, min) VALUES %s",
+                                   "INSERT INTO Forecasts (city, type, forecast_delta, summary, precipitation, temperature, max, min) VALUES %s",
                                    values
                                    )
 

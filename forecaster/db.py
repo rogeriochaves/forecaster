@@ -17,16 +17,17 @@ def create_tables():
     cur.execute('''
     CREATE TABLE IF NOT EXISTS Forecasts (
         id             SERIAL PRIMARY KEY     NOT NULL,
+        timestamp      TIMESTAMP              NOT NULL DEFAULT NOW(),
+        forecast_delta SMALLINT               NOT NULL,
         city           CHAR(50)               NOT NULL,
         type           CHAR(50)               NOT NULL,
-        datetime       TIMESTAMP              NOT NULL,
         summary        CHAR(50)               NOT NULL,
         precipitation  SMALLINT               NOT NULL,
         temperature    SMALLINT                       ,
         max            SMALLINT                       ,
         min            SMALLINT
     );
-    CREATE INDEX IF NOT EXISTS forecasts_datetime_index ON Forecasts (datetime);
+    CREATE INDEX IF NOT EXISTS forecasts_index ON Forecasts (type, timestamp, forecast_delta);
     ''')
 
     conn.commit()

@@ -10,7 +10,7 @@ app = Flask(__name__)
 def forecasts_csv():
     conn = db.connect()
     cur = conn.cursor()
-    columns = ["datetime", "city", "type", "summary",
+    columns = ["timestamp", "type", "forecast_delta", "city", "summary",
                "precipitation", "temperature", "max", "min"]
     cur.execute("SELECT " + ", ".join(columns) + " FROM Forecasts;")
     results = cur.fetchall()
