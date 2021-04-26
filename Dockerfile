@@ -7,10 +7,6 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt
 COPY . .
 
-CMD bash
-RUN touch crontab.tmp \
-    && echo '0 * * * * python /app/forecaster/scrapper.py' >> crontab.tmp \
-    && crontab crontab.tmp \
-    && rm -rf crontab.tmp
+RUN (crontab -l; echo "0 * * * * /usr/local/bin/python3 /app/forecaster/scrapper.py > /proc/1/fd/1 2>/proc/1/fd/2") | crontab
 
-CMD /usr/sbin/cron -f
+CMD cron -f -L 15
