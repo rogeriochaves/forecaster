@@ -5,6 +5,7 @@ import psycopg2
 import psycopg2.extras
 import os
 import sentry_sdk
+import time
 from prometheus_client import CollectorRegistry, Counter, push_to_gateway
 
 APP_ENV = os.environ.get('APP_ENV', 'dev')
@@ -31,17 +32,26 @@ counter = Counter('scrapped_forecasts',
 
 def run():
     db.create_tables()
-    scrap_city('Amsterdam')
-    scrap_city('Rio de Janeiro')
-    scrap_city('Porto Alegre')
-    scrap_city('Barra Mansa')
-    scrap_city('Krasnoyarsk')
-    scrap_city('Cairo')
+    scrap_city_try_twice('Amsterdam')
+    scrap_city_try_twice('Rio de Janeiro')
+    scrap_city_try_twice('Porto Alegre')
+    scrap_city_try_twice('Barra Mansa')
+    scrap_city_try_twice('Krasnoyarsk')
+    scrap_city_try_twice('Cairo')
 
     if APP_ENV == 'prod':
         push_to_gateway('localhost:9091', job='scrapper.py', registry=registry)
 
     print("Done!")
+
+
+def scrap_city_try_twice(name):
+    try:
+        scrap_city(name)
+    except:
+        print("Scrapping city " + name + " failed, trying again in 5s")
+        time.sleep(5)
+        scrap_city(name)
 
 
 def scrap_city(name):
