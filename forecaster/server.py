@@ -1,12 +1,23 @@
+import error_reporting
 import db
 import csv
 import io
 import os
-from flask import Flask, make_response
+from flask import Flask, make_response, render_template
+from visualizations import bayes
+from yyyy_mm_dd import *
 app = Flask(__name__)
 
 
 @app.route('/')
+@app.route('/<city>')
+def index(city="Amsterdam"):
+    predictions = bayes.predictions_for(city)
+
+    return render_template('bayes.html', today=today(), city=city, predictions=predictions)
+
+
+@app.route('/csv')
 def forecasts_csv():
     conn = db.connect()
     cur = conn.cursor()
@@ -30,4 +41,5 @@ def forecasts_csv():
 
 
 db.create_tables()
-app.run(port=os.environ.get('PORT', 5000))
+app.run(port=os.environ.get('PORT', 5000),
+        debug=os.environ.get('APP_ENV', 'dev') == 'dev')

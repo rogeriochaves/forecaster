@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Forecaster</title>
+    <style>
+      body {
+        font-family: sans-serif;
+      }
+      .col {
+        display: flex;
+        flex-direction: column;
+      }
+      .row {
+        display: flex;
+      }
+      .forecast-block {
+        min-width: 200px;
+        text-align: center;
+        border: 1px solid #000;
+        padding: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Predictions for {{ city }}</h1>
+    <div class="row">
+      {% for prediction in predictions %}
+        <div class="col forecast-block">
+          {% if prediction.forecast_for.strftime('%Y-%m-%d') == today %}
+            <h3>{{ prediction.forecast_for.strftime('%H:%M') }}</h3>
+          {% else %}
+            <h3>{{ prediction.forecast_for.strftime('%d/%b %H:%M') }}</h3>
+          {% endif %}
+          <div class="col">
+            {% for probability in prediction.probabilities %}
+              <div>{{ probability.weather }} {{ probability.chance }}%</div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </body>
+</html>
