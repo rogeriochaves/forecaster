@@ -26,26 +26,46 @@ def adjust_forecast(df, row):
 
     probabilities = {}
     for weather in df.weather_type.cat.categories:
-        len_weather = len(df[df.weather_type_actual == weather])
-        p_weather = len_weather / len_df
+        df_weather = df[df.weather_type_actual == weather]
+        p_weather = len(df_weather) / len_df
         if p_weather == 0:
             continue
 
-        p_prediction_given_weather = len(df[(df.weather_type == prediction) & (
-            df.weather_type_actual == weather)]) / len_weather
-        # p_prediction_given_weather = (p_prediction * p_weather) / len_weather
+        p_prediction_given_weather = len(
+            df_weather[df_weather.weather_type == prediction]) / len(df_weather)
 
-        p_weather_given_prediction = 100 * (
+        p_weather_given_prediction = (
             p_prediction_given_weather * p_weather) / p_prediction
 
-        if p_weather_given_prediction > 1:
-            probabilities[weather] = {
-                'weather': weather, 'chance': round(p_weather_given_prediction)}
+        group = weather_group(weather)
+        probabilities[group] = \
+            probabilities.get(group, 0) + p_weather_given_prediction
 
-    probabilities = sorted(probabilities.values(),
-                           key=lambda x: x["chance"], reverse=True)
+    probabilities = [{
+        'weather': key,
+        'chance': round(100 * chance)
+    } for key, chance in probabilities.items() if chance > 0.01]
+
+    probabilities = sorted(
+        probabilities, key=lambda x: x["chance"], reverse=True)
 
     return {'forecast_for': row.forecast_for, 'probabilities': probabilities}
+
+
+def weather_group(weather):
+    if 'Sunny' in weather:
+        return 'Sunny'
+    elif 'Clear' in weather:
+        return 'Clear'
+    elif 'Cloudy' in weather:
+        return 'Cloudy'
+    elif 'T-' in weather:
+        return 'T-Storms'
+    elif 'Showers' in weather:
+        return 'Showers'
+    elif 'Rain' in weather:
+        return 'Rain'
+    return weather
 
 
 def get_data(city):
@@ -73,7 +93,7 @@ def build_df(data, columns):
                           for timestamp, delta in zip(df['timestamp'], df['forecast_delta'])]
     # TODO: care about the wind
     df['weather_type'] = pd.Series([summary.replace(
-        " / Wind", "") for summary in df['summary']]).astype("category")
+        " / Wind", "").strip() for summary in df['summary']]).astype("category")
     to_join = df[df.forecast_delta == 0].drop(columns=['forecast_for']).rename(
         columns={'timestamp': 'forecast_for'}).set_index(['forecast_for'])[['weather_type']].copy()
     df = df.join(

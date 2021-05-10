@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Keyshape -->
+<svg xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" viewBox="0 0 64 64" style="white-space: pre;">
+    <g transform="translate(17.3,17.3)">
+        <ellipse fill="#FFCE55" rx="8.7" ry="8.7" transform="translate(0,0) translate(14.7,14.7)"/>
+    </g>
+    <g transform="translate(32,32) translate(-14.7,-14.7)" style="animation: 3s linear infinite both a0_t;">
+        <ellipse fill="#FFAF57" rx="5.7" ry="5.7" transform="translate(0,0) translate(14.7,14.7)"/>
+    </g>
+    <g opacity="1" transform="translate(32,32) translate(-14.7,-14.7)" style="animation: 3s linear infinite both a1_t, 3s linear infinite both a1_o;">
+        <ellipse fill="#FFCE55" rx="1.7" ry="1.7" transform="translate(0,0) translate(14.7,1.7)"/>
+        <ellipse fill="#FFCE55" rx="1.7" ry="1.7" transform="translate(0,0) translate(14.7,27.7)"/>
+        <ellipse fill="#FFCE55" rx="1.7" ry="1.7" transform="translate(0,0) translate(1.7,14.7)"/>
+        <ellipse fill="#FFCE55" rx="1.7" ry="1.7" transform="translate(0,0) translate(27.7,14.7)"/>
+    </g>
+</svg>
