@@ -6,3 +6,4 @@ prometheus-client
 sentry-sdk
 Flask
 pandas
+numpy

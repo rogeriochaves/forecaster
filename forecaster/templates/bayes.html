@@ -22,6 +22,9 @@
       .forecast-block {
         text-align: center;
         padding: 10px;
+        min-width: 100px;
+        max-width: 100px;
+        border-right: 1px solid #ccc;
       }
     </style>
     <script src="/static/javascript/keyshape.min.js"></script>
@@ -35,8 +38,18 @@
           {% if prediction.forecast_for.strftime('%Y-%m-%d') != today %}
             <small>{{ prediction.forecast_for.strftime('%b %d') }}</small>
           {% endif %}
+          <div style="margin-bottom: 15px">
+            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 50" style="margin-top: 25px">
+              <path d="M 0,50 {{ bell_curve_points(prediction.precipitation) }} 100,50 z" style="fill: #0066cc" />
+            </svg>
+            <div style="margin-top: 10px">
+              Precipitation <br />
+              {{ (prediction.precipitation.mu * 100)|round|int }}
+              ± {{ (prediction.precipitation.sigma * 100)|round|int }}
+            </div>
+          </div>
           {% for probability in prediction.probabilities %}
-            {% if probability.chance > 5 %}
+            {% if probability.chance >= 5 %}
               <div>
                 {% if probability.weather == "Sunny" %}
                   <img src="/static/svg/a_1_sunny.svg" />

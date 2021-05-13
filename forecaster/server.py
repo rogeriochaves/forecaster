@@ -3,6 +3,7 @@ import db
 import csv
 import io
 import os
+import numpy as np
 from flask import Flask, make_response, render_template
 from visualizations import bayes
 from yyyy_mm_dd import *
@@ -14,7 +15,20 @@ app = Flask(__name__)
 def index(city="Amsterdam"):
     predictions = bayes.predictions_for(city)
 
-    return render_template('bayes.html', today=today(), city=city, predictions=predictions)
+    return render_template('bayes.html', today=today(), city=city, predictions=predictions, bell_curve_points=bell_curve_points)
+
+
+def bell_curve_points(precipitation):
+    mu = precipitation['mu']
+    sigma = precipitation['sigma']
+
+    bins = np.array(list(range(0, 101))) / 100
+    line = np.exp(-(bins - mu)**2 / (2 * sigma**2))
+
+    points = [("%.0f" % (x * 100)) + "," + ("%.2f" % (50 - (50 * y)))
+              for x, y in zip(bins, line)]
+
+    return " ".join(points)
 
 
 @app.route('/csv')
