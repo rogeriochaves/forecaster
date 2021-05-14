@@ -17,6 +17,10 @@ CITY_CODES = {
     'Barra Mansa': '14a69e18784b4275be2e05bc6436f00e12595a8d239d122955a3dc2aba5408a0',
     'Krasnoyarsk': 'bcac3a08a51c90ff7e3fb94c1bd1b4b444b183142d7602044b094dd259853913',
     'Cairo': '2baa93f2531b18395e9b0062c11ffee82838615b3ac6141394235eb734bac64d',
+    'Valença': '801c966fba6db9868eeeb81c96bae2c09cf7a3c3578618559ad5be9e4f2d859a',
+    'London': 'ae8230efd4bc57fdf721a02c7eb2b88c56aa6e71d73666328e33af3ea2039032132e24ae91b6a07862c5091a9d95a4b8',
+    'Athens': '5892dfe2c539df7d42cdbd8f9cfda434f21f6c2a63cec329fa598d4e5aa3d584',
+    'Barcelona': '0ce8d487db0a25631ee2017ddbe068bfba0de2b24de23f0b82c95863724f3a86'
 }
 
 registry = CollectorRegistry()
@@ -26,12 +30,8 @@ counter = Counter('scrapped_forecasts',
 
 def run():
     db.create_tables()
-    scrap_city_try_twice('Amsterdam')
-    scrap_city_try_twice('Rio de Janeiro')
-    scrap_city_try_twice('Porto Alegre')
-    scrap_city_try_twice('Barra Mansa')
-    scrap_city_try_twice('Krasnoyarsk')
-    scrap_city_try_twice('Cairo')
+    for city in CITY_CODES.keys():
+        scrap_city_try_twice(city)
 
     if APP_ENV == 'prod':
         push_to_gateway('localhost:9091', job='scrapper.py', registry=registry)
