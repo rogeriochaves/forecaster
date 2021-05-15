@@ -7,3 +7,4 @@ sentry-sdk
 Flask
 pandas
 numpy
+pymc3

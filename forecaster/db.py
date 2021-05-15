@@ -28,7 +28,23 @@ def create_tables():
         min            SMALLINT
     );
     CREATE INDEX IF NOT EXISTS forecasts_index ON Forecasts (type, timestamp, forecast_delta);
+
+    CREATE TABLE IF NOT EXISTS PrecipitationSigmas (
+        city           CHAR(50) PRIMARY KEY   NOT NULL,
+        data           JSONB                  NOT NULL,
+        updated_at     TIMESTAMP              NOT NULL
+    );
     ''')
+
+    conn.commit()
+    conn.close()
+
+
+def insert(query, args):
+    conn = connect()
+    cur = conn.cursor()
+
+    cur.execute(query, args)
 
     conn.commit()
     conn.close()
