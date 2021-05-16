@@ -40,7 +40,7 @@ def create_tables():
     conn.close()
 
 
-def insert(query, args):
+def execute(query, args):
     conn = connect()
     cur = conn.cursor()
 
@@ -50,10 +50,12 @@ def insert(query, args):
     conn.close()
 
 
-def select(query, args):
+def select(query, args=None):
     conn = connect()
     cur = conn.cursor()
+
     cur.execute(query, args)
+
     results = cur.fetchall()
     conn.close()
 

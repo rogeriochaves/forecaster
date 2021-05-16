@@ -20,6 +20,7 @@ def predictions_for(city):
         adjusted['precipitation'] = precipitation_bell_curve(sigmas, row)
         adjusted_forecasts.append(adjusted)
 
+    adjusted_forecasts.reverse()
     return adjusted_forecasts
 
 
@@ -66,7 +67,6 @@ def get_sigmas(city):
     sigmas = db.select(
         "SELECT data FROM PrecipitationSigmas where city = %s", (city,))
     sigmas = sigmas[0][0]['hourly']
-    print("sigmas", sigmas)
 
     return sigmas
 
@@ -90,16 +90,8 @@ def weather_group(weather):
 def get_data(city):
     columns = ["timestamp", "forecast_delta",
                "summary", "temperature", "precipitation"]
-    conn = db.connect()
-    cur = conn.cursor()
-    cur.execute(
-        "SELECT " +
-        ", ".join(
-            columns) + " FROM Forecasts WHERE type='hourly' AND city=%s;",
-        (city,)
-    )
-    result = cur.fetchall()
-    conn.close()
+    result = db.select("SELECT " + ", ".join(columns) +
+                       " FROM Forecasts WHERE type='hourly' AND city = %s", (city,))
 
     return build_df(result, columns)
 

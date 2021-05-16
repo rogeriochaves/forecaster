@@ -45,7 +45,9 @@
             <div style="margin-top: 10px">
               Precipitation <br />
               {{ (prediction.precipitation.mu * 100)|round|int }}
-              ± {{ (prediction.precipitation.sigma * 100)|round|int }}
+              {% if prediction.precipitation.sigma > 0 %}
+                ± {{ (prediction.precipitation.sigma * 100)|round|int }}
+              {% endif %}
             </div>
           </div>
           {% for probability in prediction.probabilities %}

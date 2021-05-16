@@ -50,7 +50,7 @@ def calculate_sigmas(city):
     y = df['precipitation_actual']
 
     with basic_model:
-        sigmas = pm.Uniform('sigmas', lower=0, upper=1, shape=len(set(deltas)) - 1)
+        sigmas = pm.Uniform('sigmas', lower=0, upper=1, shape=len(set(deltas)))
         actual = pm.Normal("actual", mu=X, sd=sigmas[deltas - 1], observed=y)
         trace = pm.sample(500)
 
@@ -84,8 +84,10 @@ def collect_stats(df, city, trace):
 
 
 def save_sigmas(city, data):
-    db.insert("INSERT INTO PrecipitationSigmas(city, data, updated_at) VALUES (%s, %s, NOW())",
-              (city, json.dumps(data)))
+    data_json = json.dumps(data)
+    db.execute("INSERT INTO PrecipitationSigmas(city, data, updated_at) VALUES (%s, %s, NOW()) \
+                ON CONFLICT (city) DO UPDATE SET data = %s, updated_at = NOW()",
+               (city, data_json, data_json))
 
 
 def get_hourly_data(city):
