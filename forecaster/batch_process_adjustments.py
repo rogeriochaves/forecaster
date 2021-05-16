@@ -50,7 +50,7 @@ def calculate_sigmas(city):
     y = df['precipitation_actual']
 
     with basic_model:
-        sigmas = pm.Uniform('sigmas', lower=0, upper=1, shape=len(set(deltas)))
+        sigmas = pm.Uniform('sigmas', lower=0, upper=1, shape=len(set(deltas)) - 1)
         actual = pm.Normal("actual", mu=X, sd=sigmas[deltas - 1], observed=y)
         trace = pm.sample(500)
 

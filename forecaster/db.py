@@ -48,3 +48,13 @@ def insert(query, args):
 
     conn.commit()
     conn.close()
+
+
+def select(query, args):
+    conn = connect()
+    cur = conn.cursor()
+    cur.execute(query, args)
+    results = cur.fetchall()
+    conn.close()
+
+    return results
