@@ -16,6 +16,7 @@ def predictions_for(city):
     adjusted_forecasts = []
     for row in forecasts.values():
         adjusted = {'forecast_for': row.forecast_for}
+        adjusted['temperature'] = row.temperature
         adjusted['probabilities'] = weather_probabilities(df, row)
         adjusted['precipitation'] = precipitation_bell_curve(sigmas, row)
         adjusted_forecasts.append(adjusted)
