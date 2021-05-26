@@ -1,0 +1,2 @@
+0 * * * * /usr/local/bin/python3 /app/forecaster/scrapper.py > /proc/1/fd/1 2>/proc/1/fd/2
+0 2 */15 * * /usr/local/bin/python3 /app/forecaster/batch_process_adjustments.py > /proc/1/fd/1 2>/proc/1/fd/2
