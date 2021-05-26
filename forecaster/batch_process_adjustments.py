@@ -113,7 +113,7 @@ def build_df(data, columns):
     df['precipitation'] /= 100
     df['timestamp'] = [start_of_yyyy_mm_dd_hh(
         timestamp) for timestamp in df['timestamp']]
-    df['timestamp'] = pd.to_datetime(df['timestamp'])
+    df['timestamp'] = pd.to_datetime(df['timestamp'], utc=True)
     df['forecast_for'] = [move_yyyy_mm_dd_hh(timestamp, delta)
                           for timestamp, delta in zip(df['timestamp'], df['forecast_delta'])]
     # TODO: care about the wind
