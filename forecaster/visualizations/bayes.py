@@ -104,6 +104,7 @@ def build_df(data, columns):
     df['timestamp'] = pd.to_datetime(df['timestamp'], utc=True)
     df['forecast_for'] = [move_yyyy_mm_dd_hh(timestamp, delta)
                           for timestamp, delta in zip(df['timestamp'], df['forecast_delta'])]
+    df['forecast_for'] = [ pd.to_datetime(forecast_for, utc=True) for forecast_for in df['forecast_for'] ]
     # TODO: care about the wind
     df['weather_type'] = pd.Series([summary.replace(
         " / Wind", "").strip() for summary in df['summary']]).astype("category")
